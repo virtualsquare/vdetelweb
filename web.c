@@ -358,7 +358,7 @@ static char *uriconv(char *in)
 
 static void postdata_parse(int fd,int vdefd,char *menu,char *postdata)
 {
-	char cmdbuf[BUFSIZE];
+	char cmdbuf[BUFSIZE+1];
 	int cmdlen,arglen,rv;
 	char *postcmd,*cmd,*endcmd,*arg=NULL;
 	/*printf("PD **%s**\n",postdata);*/
