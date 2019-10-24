@@ -7,6 +7,6 @@ vdeconf_DATA = vdetelwebrc
 EXTRA_DIST = ${man_MANS} vdetelwebrc
 
 vdetelweb_SOURCES = vdetelweb.c web.c telnet.c vdetelweb.h
-vdetelweb_LDFLAGS = -llwipv6 -lvdehist
+vdetelweb_LDADD = -llwipv6 -lvdehist
 
 vdetelweb_CFLAGS = -Wall
