@@ -108,7 +108,7 @@ void decode64(const char *src, char *dest, int dest_size) {
 
 	int convbuf;
 	int l = strlen(src);
-	char c_src[l];
+	char c_src[l + 1];
 	char *c;
 
 	int i, j;
