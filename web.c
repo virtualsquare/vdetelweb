@@ -63,7 +63,7 @@ struct webstat {
 	unsigned int bodylen;
 	char linebuf[BUFSIZE];
 	char path[BUFSIZE];
-	int  bufindex;
+	unsigned int  bufindex;
 };
 
 static void lowercase(char *s)
@@ -104,6 +104,7 @@ void encode64(const char *from, char *to, int tosize) {
 }
 
 void decode64(const char *src, char *dest, int dest_size) {
+	(void) dest_size;
 
 	int convbuf;
 	int l = strlen(src);
@@ -268,6 +269,7 @@ static void vde_addmenu(struct vdemenu **headp,char *name,char *help)
 
 static void vde_helpline(struct vdemenu **headp,char *buf,int len,int indata,int rv)
 {
+	(void) rv;
 	static int nl=0;
 	static int syntaxpos,helppos;
 	nl++;
@@ -313,14 +315,17 @@ static void vde_helpline(struct vdemenu **headp,char *buf,int len,int indata,int
 
 static struct vdemenu *vde_gethelp(int vdefd)
 {
+	ssize_t voidn;
+	(void) voidn;
 	struct vdemenu *head=NULL;
-	write(vdefd,"help\n",5);
+	voidn = write(vdefd,"help\n",5);
 	vde_getanswer(vde_helpline,&head,vdefd);
 	return head;
 }
 
 static void lwip_showline(int *fdp,char *buf,int len,int indata,int rv)
 {
+	(void) rv;
 	if (indata)
 		lwip_write(*fdp,buf,len);
 }
@@ -383,12 +388,14 @@ static void postdata_parse(int fd,int vdefd,char *menu,char *postdata)
 			}
 		}
 		if(cmd!=NULL && *cmd != 0) {
+			ssize_t voidn;
+			(void) voidn;
 			strncpy(cmdbuf,menu,BUFSIZE);
 			strncat(cmdbuf,"/",BUFSIZE);
 			strncat(cmdbuf,cmd,BUFSIZE);
 			strncat(cmdbuf," ",BUFSIZE);
 			strncat(cmdbuf,uriconv(arg),BUFSIZE);
-			write(vdefd,cmdbuf,strlen(cmdbuf));
+			voidn = write(vdefd,cmdbuf,strlen(cmdbuf));
 			lwip_printf(fd,"<P> </P><B>%s %s</B><PRE>",prompt,cmdbuf);
 			rv=lwip_showout(fd,vdefd);
 			lwip_printf(fd,"</PRE><B>Result: %s</B>\r\n",strerror(rv-1000));
@@ -396,6 +403,8 @@ static void postdata_parse(int fd,int vdefd,char *menu,char *postdata)
 	}
 	else if ((postcmd=strstr(postdata,"COMMAND="))!=NULL) {
 		/* accept button */
+		ssize_t voidn;
+		(void) voidn;
 		postcmd+=8;
 		for(cmdlen=0;postcmd[cmdlen] != '&' && postcmd[cmdlen] != 0; cmdlen++)
 			;
@@ -417,7 +426,7 @@ static void postdata_parse(int fd,int vdefd,char *menu,char *postdata)
 			}
 		} else
 			*endcmd=0;
-		write(vdefd,cmdbuf,strlen(cmdbuf));
+		voidn = write(vdefd,cmdbuf,strlen(cmdbuf));
 		lwip_printf(fd,"<P> </P><B>%s %s</B><PRE>",prompt,cmdbuf);
 		rv=lwip_showout(fd,vdefd);
 		lwip_printf(fd,"</PRE><B>Result: %s</B>\r\n",strerror(rv-1000));
@@ -496,6 +505,8 @@ static void web_create_page(char *path,int fd,int vdefd,char *postdata)
 {
 	struct vdemenu *this=NULL;
 	char *tail;
+	ssize_t voidn;
+	(void) voidn;
 	if ((tail=strstr(path,".html")) != NULL)
 		*tail=0;
 	if (*path==0 || ((this=vde_findmenu(menuhead,path)) != NULL)) {
@@ -513,7 +524,7 @@ static void web_create_page(char *path,int fd,int vdefd,char *postdata)
 		web_menu_index(fd);
 		if (*path==0) {/* HOME PAGE */
 			int rv;
-			write(vdefd,"showinfo\r\n",10);
+			voidn = write(vdefd,"showinfo\r\n",10);
 			lwip_printf(fd,
 					"</TD><TD><PRE>\r\n");
 			rv=lwip_showout(fd,vdefd);
@@ -652,6 +663,8 @@ void webdata(int fn,int fd,int vdefd)
 
 void webaccept(int fn,int fd,int vdefd)
 {
+	(void) fn;
+	(void) vdefd;
 	struct sockaddr_in  cli_addr;
 	int newsockfd;
 	unsigned int clilen;

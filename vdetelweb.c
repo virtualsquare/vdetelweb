@@ -110,7 +110,7 @@ static char hex[]="0123456789abcdef";
 int sha1passwdok(const char *pw) {
 	unsigned char out[mhash_get_block_size(MHASH_SHA1)];
 	char outstr[mhash_get_block_size(MHASH_SHA1)*2+1];
-	int i;
+	unsigned int i;
 	MHASH td;
 	td=mhash_init(MHASH_SHA1);
 	mhash(td, pw, strlen(pw));
@@ -160,7 +160,7 @@ static void setsighandlers(void)
 	int i;
 	for(i = 0; signals[i].sig != 0; i++)
 		if(signal(signals[i].sig,
-					signals[i].ignore ? SIG_IGN : sig_handler) < 0)
+					signals[i].ignore ? SIG_IGN : sig_handler) == SIG_ERR)
 			perror("Setting handler");
 }
 
@@ -203,8 +203,11 @@ int openextravdem(void)
 
 int openvdem(char *mgmt,char *progname, struct netif **nif,char *nodename)
 {
+	(void) progname;
 	struct sockaddr_un sun;
 	int fd,n;
+	ssize_t voidn;
+	(void) voidn;
 	char buf[BUFSIZE+1],*line2,*ctrl;
 	sun.sun_family=PF_UNIX;
 	snprintf(sun.sun_path,UNIX_PATH_MAX,"%s",mgmt);
@@ -221,7 +224,7 @@ int openvdem(char *mgmt,char *progname, struct netif **nif,char *nodename)
 	if ((ctrl=rindex(buf,'\n')) != NULL)
 		*ctrl=0;
 	banner=strdup(buf);
-	write(fd,"ds/showinfo\n",12);
+	voidn = write(fd,"ds/showinfo\n",12);
 	if ((n=read(fd,buf,BUFSIZE))<=0) {
 		printlog(LOG_ERR,"Error reading ctl socket from VDE switch: %s",strerror(errno));
 		exit(-1);
@@ -364,6 +367,7 @@ static void readdefroute(char *arg,struct netif *nif,int af)
 
 static void readpassword(char *arg,int unused)
 {
+	(void) unused;
 	passwd=strdup(arg);
 }
 
@@ -506,6 +510,8 @@ static int special_daemon(void)
 	int errorpipe[2];
 	char buf[256];
 	int n;
+	ssize_t voidn;
+	(void) voidn;
 
 	if (pipe(errorpipe))
 		return -1;
@@ -518,7 +524,7 @@ static int special_daemon(void)
 		default:
 			close(errorpipe[1]);
 			while ((n=read(errorpipe[0],buf,128)) > 0) {
-				write(STDERR_FILENO,buf,n);
+				voidn = write(STDERR_FILENO,buf,n);
 			}
 			_exit(0);
 	}
@@ -527,7 +533,7 @@ static int special_daemon(void)
 	if (setsid() == -1)
 		return (-1);
 
-	(void)chdir("/");
+	voidn = chdir("/");
 
 	if ((fd = open("/dev/null", O_RDWR, 0)) != -1) {
 		(void)dup2(fd, STDIN_FILENO);

@@ -48,6 +48,8 @@
 
 void telnetdata(int fn,int fd,int vdefd)
 {
+	(void) fd;
+	(void) vdefd;
 	struct vdehiststat *vdehst=status[fn];
 	if (vdehist_term_to_mgmt(vdehst) != 0) {
 		int termfd=vdehist_gettermfd(vdehst);
@@ -64,6 +66,8 @@ void telnetdata(int fn,int fd,int vdefd)
 
 void telnet_vdedata(int fn,int fd,int vdefd)
 {
+	(void) fd;
+	(void) vdefd;
 	struct vdehiststat *vdehst=status[fn];
 	vdehist_mgmt_to_term(vdehst);
 
@@ -121,6 +125,8 @@ char *telnet_logincmd(char *cmd,int len,struct vdehiststat *st)
 
 void telnetaccept(int fn,int fd,int vdefd)
 {
+	(void) fn;
+	(void) vdefd;
 	struct sockaddr_in  cli_addr;
 	int newsockfd;
 	unsigned int clilen;
@@ -141,6 +147,7 @@ void telnetaccept(int fn,int fd,int vdefd)
 
 void telnet_init(int vdefd)
 {
+	(void) vdefd;
 	int sockfd;
 	struct sockaddr_in  serv_addr;
 	vdehist_termread=lwip_read;
