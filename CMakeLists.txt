@@ -10,7 +10,7 @@ include(CheckIncludeFile)
 include(CheckSymbolExists)
 
 add_definitions(-D_GNU_SOURCE)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FORTIFY_SOURCE=2 -O2 -pedantic -Wall -Wextra")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FORTIFY_SOURCE=2 -O2 -pedantic -Wall -Wextra --std=gnu17")
 
 set(LIBS_REQUIRED lwipv6 vdehist mhash)
 set(HEADERS_REQUIRED lwipv6.h libvdehist.h mhash.h)
