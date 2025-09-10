@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.25)
 project(vdetelweb
     VERSION 1.2.3
     DESCRIPTION "Telnet and WEB interface for VDE2"
